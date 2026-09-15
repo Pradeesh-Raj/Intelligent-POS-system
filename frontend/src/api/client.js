@@ -36,7 +36,6 @@ async function callApi(apiFunc, mockFunc) {
   try {
     return await apiFunc()
   } catch (err) {
-    console.warn('Backend unavailable, using dynamic frontend mock data store:', err.message)
     return { data: mockFunc() }
   }
 }

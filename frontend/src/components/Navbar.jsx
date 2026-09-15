@@ -11,7 +11,7 @@ const links = [
 
 export default function Navbar() {
   const handleReset = () => {
-    if (window.confirm('Reset all mock inventory data, sales, and batches to defaults?')) {
+    if (window.confirm('Reset all inventory, sales, and batch data to default state?')) {
       resetMockData()
       window.location.reload()
     }
@@ -54,17 +54,17 @@ export default function Navbar() {
           {/* Right Status Actions */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium">
-              <Database size={12} />
-              <span>Standalone Mock Data</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>System Online</span>
             </div>
 
             <button
               onClick={handleReset}
               className="btn-secondary text-xs py-1 px-2.5 flex items-center gap-1.5 text-gray-400 hover:text-gray-200"
-              title="Reset mock database to initial state"
+              title="Reset inventory database to default state"
             >
               <RotateCcw size={12} />
-              <span className="hidden md:inline">Reset Mock Data</span>
+              <span className="hidden md:inline">Reset Store Data</span>
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ export default function StockTable({ products = [], loading = false }) {
   if (!products.length) {
     return (
       <div className="text-center py-12 text-gray-500">
-        No products found. Run the seed script to populate inventory.
+        No products found. Click 'Add Product' or 'Reset Store Data' to populate inventory.
       </div>
     )
   }

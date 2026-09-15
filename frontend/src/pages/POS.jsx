@@ -180,9 +180,9 @@ export default function POS() {
             </button>
           </form>
 
-          {/* Quick-access demo SKUs */}
+          {/* Quick-access SKUs */}
           <div className="mt-4 pt-4 border-t border-surface-700">
-            <p className="text-xs text-gray-500 mb-2">Quick-fill demo SKUs:</p>
+            <p className="text-xs text-gray-500 mb-2">Quick-fill SKUs:</p>
             <div className="flex flex-wrap gap-2">
               {['FM-001', 'FM-002', 'PR-001', 'PR-002', 'SM-001'].map((s) => (
                 <button
