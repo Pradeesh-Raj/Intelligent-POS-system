@@ -1,0 +1,28 @@
+# render.yaml — Render Blueprint
+# Defines the backend web service and PostgreSQL database.
+# Push this file to GitHub; connect the repo in Render and it auto-configures.
+#
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: pos-inventory-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install --only-binary :all: -r requirements.txt
+    startCommand: gunicorn app.main:app -w 2 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pos-inventory-db
+          property: connectionString
+      - key: ALLOWED_ORIGINS
+        sync: false   # set manually in Render dashboard to your Vercel URL
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+
+databases:
+  - name: pos-inventory-db
+    plan: free
+    databaseName: pos_inventory

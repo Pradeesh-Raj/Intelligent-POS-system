@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #0d1117;
+    --color-surface: #161b22;
+    --color-border: #21262d;
+    --color-text-primary: #e6edf3;
+    --color-text-secondary: #8b949e;
+    --color-brand: #3b5bdb;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-surface-900 text-gray-100 font-sans antialiased;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d1117 0%, #0f1723 50%, #0d1117 100%);
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-800;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-500 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-surface-400;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-800 border border-surface-700 rounded-xl p-5 shadow-lg transition-all duration-200;
+  }
+
+  .card:hover {
+    @apply border-surface-600 shadow-xl;
+  }
+
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-400 text-white font-semibold px-4 py-2 rounded-lg 
+           transition-all duration-200 active:scale-95 shadow-lg shadow-brand-900/40 
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-700 hover:bg-surface-600 text-gray-200 font-medium px-4 py-2 
+           rounded-lg border border-surface-600 hover:border-surface-500 transition-all 
+           duration-200 active:scale-95;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-500 text-white font-semibold px-4 py-2 rounded-lg 
+           transition-all duration-200 active:scale-95;
+  }
+
+  .input {
+    @apply bg-surface-700 border border-surface-600 text-gray-100 placeholder-gray-500 
+           rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-brand-500 
+           focus:border-transparent transition-all duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-green  { @apply badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30; }
+  .badge-yellow { @apply badge bg-amber-500/20  text-amber-400  border border-amber-500/30; }
+  .badge-red    { @apply badge bg-red-500/20    text-red-400    border border-red-500/30; }
+  .badge-blue   { @apply badge bg-brand-500/20  text-brand-400  border border-brand-500/30; }
+  .badge-gray   { @apply badge bg-surface-600   text-gray-400   border border-surface-500; }
+
+  .stat-card {
+    @apply card flex flex-col gap-2;
+  }
+
+  .stat-value {
+    @apply text-3xl font-bold text-white;
+  }
+
+  .stat-label {
+    @apply text-sm text-gray-400 font-medium uppercase tracking-wide;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-gray-100 flex items-center gap-2;
+  }
+
+  .page-header {
+    @apply mb-6;
+  }
+
+  .page-header h1 {
+    @apply text-2xl font-bold text-white;
+  }
+
+  .page-header p {
+    @apply text-gray-400 mt-1;
+  }
+
+  /* Glassmorphism effect for hero areas */
+  .glass {
+    background: rgba(22, 27, 34, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Gradient border trick */
+  .gradient-border {
+    position: relative;
+    background: #161b22;
+    border-radius: 12px;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 1px;
+    background: linear-gradient(135deg, #3b5bdb, #7c3aed);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Expiry color coding */
+  .expiry-critical { @apply text-red-400; }
+  .expiry-warning  { @apply text-amber-400; }
+  .expiry-ok       { @apply text-emerald-400; }
+  .expiry-none     { @apply text-gray-500; }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #6080f5 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-brand {
+    box-shadow: 0 0 20px rgba(59, 91, 219, 0.3);
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+}
