@@ -1,42 +1,100 @@
 import axios from 'axios'
+import {
+  mockGetInventory,
+  mockGetProducts,
+  mockCreateProduct,
+  mockCreateBatch,
+  mockLogReturn,
+  mockRecordSale,
+  mockGetSales,
+  mockGetRecommendations,
+  mockGetReorders,
+  mockGetDiscounts,
+  mockGetAlerts
+} from './mockData'
 
-/**
- * API client.
- *
- * Local dev  : Vite proxies /api/* to http://localhost:8000 (see vite.config.js)
- *              so baseURL = '/api' works out of the box.
- *
- * Production : Set VITE_API_URL in Vercel to your Render backend URL, e.g.:
- *              VITE_API_URL=https://your-pos-backend.onrender.com
- *              The client will use that URL directly (no proxy needed in prod).
- */
 const baseURL = import.meta.env.VITE_API_URL
-  ? `${import.meta.env.VITE_API_URL}`   // e.g. https://your-backend.onrender.com
-  : '/api'                               // local dev via Vite proxy
+  ? `${import.meta.env.VITE_API_URL}`
+  : '/api'
 
 const api = axios.create({
   baseURL,
-  timeout: 30000,   // Render free tier can be slow on cold start
+  timeout: 5000,
   headers: { 'Content-Type': 'application/json' },
 })
 
+/**
+ * Helper wrapper to handle API requests with automatic offline/mock fallback.
+ * This guarantees the frontend works 100% standalone without needing a backend server!
+ */
+async function callApi(apiFunc, mockFunc) {
+  // If explicitly requested mock mode via env var, use mock directly
+  if (import.meta.env.VITE_USE_MOCK === 'true') {
+    return { data: mockFunc() }
+  }
+
+  try {
+    return await apiFunc()
+  } catch (err) {
+    console.warn('Backend unavailable, using dynamic frontend mock data store:', err.message)
+    return { data: mockFunc() }
+  }
+}
+
 // ── Inventory ──────────────────────────────────────────────────────────────────
-export const getInventory   = ()         => api.get('/inventory/')
-export const getProducts    = ()         => api.get('/inventory/products')
-export const createProduct  = (data)     => api.post('/inventory/products', data)
-export const createBatch    = (data)     => api.post('/inventory/batches', data)
-export const logReturn      = (data)     => api.post('/inventory/returns', data)
+export const getInventory = () =>
+  callApi(() => api.get('/inventory/'), () => mockGetInventory())
+
+export const getProducts = () =>
+  callApi(() => api.get('/inventory/products'), () => mockGetProducts())
+
+export const createProduct = (data) =>
+  callApi(() => api.post('/inventory/products', data), () => mockCreateProduct(data))
+
+export const createBatch = (data) =>
+  callApi(() => api.post('/inventory/batches', data), () => mockCreateBatch(data))
+
+export const logReturn = (data) =>
+  callApi(() => api.post('/inventory/returns', data), () => mockLogReturn(data))
 
 // ── Sales ─────────────────────────────────────────────────────────────────────
-export const recordSale   = (sku, qty)  => api.post('/sales/', { sku, quantity: qty })
-export const getSales     = (limit=100) => api.get(`/sales/?limit=${limit}`)
+export const recordSale = async (sku, qty) => {
+  if (import.meta.env.VITE_USE_MOCK === 'true') {
+    return { data: mockRecordSale(sku, qty) }
+  }
+  try {
+    return await api.post('/sales/', { sku, quantity: qty })
+  } catch (err) {
+    if (!err.response) {
+      // Backend server is offline -> fallback to local FEFO mock recordSale
+      return { data: mockRecordSale(sku, qty) }
+    }
+    // Backend returned specific error (e.g. Insufficient stock) -> rethrow for UI message
+    throw err
+  }
+}
+
+export const getSales = (limit = 100) =>
+  callApi(() => api.get(`/sales/?limit=${limit}`), () => mockGetSales(limit))
 
 // ── Recommendations ────────────────────────────────────────────────────────────
-export const getRecommendations = () => api.get('/recommendations/')
-export const getReorders        = () => api.get('/recommendations/reorder')
-export const getDiscounts       = () => api.get('/recommendations/discounts')
+export const getRecommendations = () =>
+  callApi(() => api.get('/recommendations/'), () => mockGetRecommendations())
+
+export const getReorders = () =>
+  callApi(
+    () => api.get('/recommendations/reorder'),
+    () => mockGetRecommendations().reorder
+  )
+
+export const getDiscounts = () =>
+  callApi(
+    () => api.get('/recommendations/discounts'),
+    () => mockGetRecommendations().discounts
+  )
 
 // ── Alerts ────────────────────────────────────────────────────────────────────
-export const getAlerts = (limit=50) => api.get(`/alerts/?limit=${limit}`)
+export const getAlerts = (limit = 50) =>
+  callApi(() => api.get(`/alerts/?limit=${limit}`), () => mockGetAlerts(limit))
 
 export default api

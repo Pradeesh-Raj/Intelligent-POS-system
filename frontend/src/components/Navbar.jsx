@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
-import { ShoppingCart, BarChart3, Lightbulb, Bell } from 'lucide-react'
+import { ShoppingCart, BarChart3, Lightbulb, Bell, RotateCcw, Database } from 'lucide-react'
+import { resetMockData } from '../api/mockData'
 
 const links = [
   { to: '/pos',             label: 'POS',             Icon: ShoppingCart },
@@ -9,6 +10,13 @@ const links = [
 ]
 
 export default function Navbar() {
+  const handleReset = () => {
+    if (window.confirm('Reset all mock inventory data, sales, and batches to defaults?')) {
+      resetMockData()
+      window.location.reload()
+    }
+  }
+
   return (
     <nav className="glass border-b border-surface-700 sticky top-0 z-50">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -18,7 +26,10 @@ export default function Navbar() {
             <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center shadow-lg shadow-brand-900/50">
               <ShoppingCart size={16} className="text-white" />
             </div>
-            <span className="font-bold text-lg text-gradient">IntelliPOS</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-lg text-gradient leading-none">IntelliPOS</span>
+              <span className="text-[10px] text-brand-400 font-medium tracking-wide">SMART INVENTORY</span>
+            </div>
           </div>
 
           {/* Nav Links */}
@@ -30,7 +41,7 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ` +
                   (isActive
-                    ? 'bg-brand-500/20 text-brand-300 border border-brand-500/30'
+                    ? 'bg-brand-500/20 text-brand-300 border border-brand-500/30 shadow-sm'
                     : 'text-gray-400 hover:text-gray-100 hover:bg-surface-700')
                 }
               >
@@ -40,10 +51,21 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Live indicator */}
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse-slow" />
-            Live • Updates every 60s
+          {/* Right Status Actions */}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full font-medium">
+              <Database size={12} />
+              <span>Standalone Mock Data</span>
+            </div>
+
+            <button
+              onClick={handleReset}
+              className="btn-secondary text-xs py-1 px-2.5 flex items-center gap-1.5 text-gray-400 hover:text-gray-200"
+              title="Reset mock database to initial state"
+            >
+              <RotateCcw size={12} />
+              <span className="hidden md:inline">Reset Mock Data</span>
+            </button>
           </div>
         </div>
       </div>
